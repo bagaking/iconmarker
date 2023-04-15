@@ -76,32 +76,54 @@ func SaveImage2File(img image.Image, path string, encoder func(io.Writer, image.
 }
 
 // adaptSize returns the real font size that fits the max width and height
-func adaptSize(f *truetype.Font, text string, maxW, maxH int) (realSize float64) {
+func adaptSize(f *truetype.Font, text string, maxW, maxH int, fontSize float64) (realSize float64) {
 	if maxH > 0 {
 		realSize = float64(maxH)
 	} else {
 		realSize = float64(maxW)
 	}
+	opt := truetype.Options{
+		Size:    realSize,
+		DPI:     72,
+		Hinting: font.HintingNone,
+	}
 	d := &font.Drawer{
-		Face: truetype.NewFace(f, &truetype.Options{
-			Size:    realSize,
-			DPI:     72,
-			Hinting: font.HintingNone,
-		}),
+		Face: truetype.NewFace(f, &opt),
+	}
+
+	isInside := func() bool {
+		width := d.MeasureString(text).Round()
+		return width <= maxW && d.Face.Metrics().Height.Ceil() <= maxH
+	}
+
+	changeFontSize := func(size float64) {
+		opt.Size = size
+		d.Face = truetype.NewFace(f, &opt)
+	}
+
+	// if font size is specified, use it directly when it is smaller than max width
+	if fontSize > 0 {
+		if isInside() {
+			return fontSize
+		}
+		// if realSize > fontSize, init realSize to fontSize
+		// cuz the fontsize is already larger than max, it will make the binary
+		// search faster
+		// but is makes different result from different font size, thus the adapting
+		// result is stable only when font size is not specified (fontSize == 0)
+		if realSize > fontSize {
+			realSize = fontSize
+		}
 	}
 
 	// binary search to reduce font size until it is smaller than max width
 	for {
-		width := d.MeasureString(text).Round()
-		if width <= maxW && d.Face.Metrics().Height.Ceil() <= maxH {
+		if isInside() {
 			break
 		}
+
 		realSize /= 2
-		d.Face = truetype.NewFace(f, &truetype.Options{
-			Size:    realSize,
-			DPI:     72,
-			Hinting: font.HintingNone,
-		})
+		changeFontSize(realSize)
 
 		if realSize < 3 {
 			realSize = 3
@@ -113,13 +135,9 @@ func adaptSize(f *truetype.Font, text string, maxW, maxH int) (realSize float64)
 	// size to make it just smaller than max width
 	for {
 		assumedSize := (realSize + 1) * 1.1
-		d.Face = truetype.NewFace(f, &truetype.Options{
-			Size:    assumedSize,
-			DPI:     72,
-			Hinting: font.HintingNone,
-		})
-		width := d.MeasureString(text).Round()
-		if width > maxW || d.Face.Metrics().Height.Ceil() > maxH {
+		changeFontSize(assumedSize)
+
+		if !isInside() {
 			break
 		}
 		realSize = assumedSize
@@ -128,9 +146,29 @@ func adaptSize(f *truetype.Font, text string, maxW, maxH int) (realSize float64)
 	return realSize
 }
 
+// DrawCenteredFont draws text on image with center alignment
+// if opt.MaxWidth > 0 and opt.fontsize == 0, the font size will
+// be adapted to fit the max width and height (height is ignored
+// if it is 0), otherwise the font size will be opt.FontSize. for
+// any specified font size, the adapting result will be stable
+//
+// if opt.FontSize > 0, the font size will be used directly and be
+// scaled down to fit max width
+//
+// when adapt font size are not used, the smaller font size is 1,
+// if the font size is smaller than 1, an error will be returned
+//
+// to easily draw text with different effects, use DrawTextOption's
+// pipe operators, such as DrawTextOption.SetStaticSize or
+// DrawTextOption.SetAdaptedSize
+//
+// its also possible to draw text with different effects,
+// see DrawTextOption
 func DrawCenteredFont(f *truetype.Font, outI *image.RGBA, opt DrawTextOption) error {
 	if opt.MaxWidth > 0 {
-		opt.FontSize = adaptSize(f, opt.Text, opt.MaxWidth, opt.MaxHeight)
+		opt.FontSize = adaptSize(f, opt.Text, opt.MaxWidth, opt.MaxHeight, opt.FontSize)
+	} else if opt.FontSize < 1 {
+		return fmt.Errorf("invalid font size: %f", opt.FontSize)
 	}
 
 	d := &font.Drawer{

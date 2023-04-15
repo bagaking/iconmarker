@@ -27,6 +27,20 @@ const (
 	EOutline = "outline"
 )
 
+func (o DrawTextOption) SetStaticSize(fontSize float64) DrawTextOption {
+	o.FontSize = fontSize
+	o.MaxWidth = 0
+	o.MaxHeight = 0
+	return o
+}
+
+func (o DrawTextOption) SetAdaptedSize(maxWidth, maxHeight int) DrawTextOption {
+	o.FontSize = 0
+	o.MaxWidth = maxWidth
+	o.MaxHeight = maxHeight
+	return o
+}
+
 func (o DrawTextOption) AddShadow(c color.Color, uniOffset int) DrawTextOption {
 	o.Effect = append(o.Effect, FontEffect{
 		Type:    EShadow,
