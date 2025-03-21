@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 纸飞机主体 -->
+  <path d="M448 128L64 224L208 272L448 128Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <path d="M448 128L256 384L208 272L448 128Z" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 折痕 -->
+  <path d="M208 272L240 336L256 384" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg> 

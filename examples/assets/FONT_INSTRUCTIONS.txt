@@ -1,4 +1,0 @@
-字体文件下载失败。请手动下载Google Roboto字体并将其保存为font.ttf:
-https://github.com/google/fonts/raw/main/apache/roboto/static/Roboto-Regular.ttf
-
-或者使用你自己的TTF字体文件，重命名为font.ttf放在此目录下。

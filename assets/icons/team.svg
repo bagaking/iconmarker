@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 中央人物 -->
+  <circle cx="256" cy="160" r="60" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16"/>
+  <path d="M336 300C336 256.8 300.1 222 256 222C211.9 222 176 256.8 176 300V320H336V300Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+  <!-- 左侧人物 -->
+  <circle cx="128" cy="192" r="48" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="16"/>
+  <path d="M192 320C192 284.7 163.3 256 128 256C92.7 256 64 284.7 64 320V336H192V320Z" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+  <!-- 右侧人物 -->
+  <circle cx="384" cy="192" r="48" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="16"/>
+  <path d="M448 320C448 284.7 419.3 256 384 256C348.7 256 320 284.7 320 320V336H448V320Z" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+</svg> 

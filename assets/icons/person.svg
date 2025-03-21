@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 头部 -->
+  <circle cx="256" cy="176" r="80" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20"/>
+  <!-- 身体 -->
+  <path d="M368 384C368 325.4 318.6 278 256 278C193.4 278 144 325.4 144 384V416H368V384Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+</svg> 

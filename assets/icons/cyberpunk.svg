@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 赛博眼罩 -->
+  <path d="M80 192H432V320H80V192Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="24" stroke-linejoin="round"/>
+  <!-- 眼罩裁切 -->
+  <path d="M144 192V320" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M208 192V320" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M272 192V320" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M336 192V320" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M400 192V320" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <!-- 科技感元素 -->
+  <path d="M80 224H432" stroke="#A0A0A0" stroke-width="8"/>
+  <path d="M80 256H432" stroke="#A0A0A0" stroke-width="8"/>
+  <path d="M80 288H432" stroke="#A0A0A0" stroke-width="8"/>
+  <!-- 顶部装饰 -->
+  <path d="M304 192V160L368 128L304 96V64" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg> 

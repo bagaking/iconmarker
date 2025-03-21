@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 心形 -->
+  <path d="M256 416C256 416 96 320 96 208C96 160 128 128 176 128C208 128 240 152 256 176C272 152 304 128 336 128C384 128 416 160 416 208C416 320 256 416 256 416Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="24" stroke-linejoin="round"/>
+</svg> 

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 待办清单 -->
+  <rect x="96" y="96" width="320" height="320" rx="32" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 顶部标记 -->
+  <path d="M160 96V64" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M256 96V64" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M352 96V64" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <!-- 待办项目 -->
+  <path d="M128 192H384" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M128 256H384" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M128 320H384" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+</svg> 

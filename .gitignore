@@ -1,5 +1,6 @@
 .idea
 .vs_code
+.DS_Store
 
 # Binaries for programs and plugins
 *.exe
@@ -17,5 +18,5 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-
+output/
 examples/**/output

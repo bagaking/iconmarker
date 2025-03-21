@@ -7,11 +7,11 @@ import (
 	"image/draw"
 	"image/jpeg"
 	"image/png"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 
 	"github.com/bagaking/iconmarker"
+	"github.com/bagaking/iconmarker/assets"
 	"github.com/bagaking/iconmarker/core"
 	"github.com/bagaking/iconmarker/filter"
 	"github.com/bagaking/iconmarker/renderer"
@@ -55,11 +55,24 @@ func main() {
 		return
 	}
 
-	// 读取SVG图标
+	// 读取外部SVG图标
 	svgFile := filepath.Join("..", "assets", "icon.svg")
-	svgData, err := ioutil.ReadFile(svgFile)
+	svgData, err := os.ReadFile(svgFile)
 	if err != nil {
-		fmt.Printf("无法读取SVG图标: %v\n", err)
+		fmt.Printf("无法读取外部SVG图标: %v\n", err)
+		return
+	}
+
+	// 获取内嵌的SVG图标
+	diamondSvgData, err := assets.IconDiamondMarker.Load()
+	if err != nil {
+		fmt.Printf("无法获取内嵌的菱形标记图标: %v\n", err)
+		return
+	}
+
+	locationPinData, err := assets.IconLocationPin.Load()
+	if err != nil {
+		fmt.Printf("无法获取内嵌的位置标记图标: %v\n", err)
 		return
 	}
 
@@ -73,17 +86,20 @@ func main() {
 	// 创建IconMarker实例
 	marker := iconmarker.NewIconMarker()
 
-	// 示例1：SVG图标在左，文本在右
+	// 示例1：SVG图标在左，文本在右（使用外部SVG）
 	example1_IconLeft(marker, bgImg, svgData, outputDir)
 
-	// 示例2：SVG图标在上，文本在下
-	example2_IconTop(marker, bgImg, svgData, outputDir)
+	// 示例2：SVG图标在上，文本在下（使用内嵌菱形图标）
+	example2_IconTop(marker, bgImg, diamondSvgData, outputDir)
 
-	// 示例3：文本环绕SVG图标
-	example3_TextAround(marker, bgImg, svgData, outputDir)
+	// 示例3：文本环绕SVG图标（使用内嵌位置标记图标）
+	example3_TextAround(marker, bgImg, locationPinData, outputDir)
 
-	// 示例4：带滤镜的组合效果
+	// 示例4：带滤镜的组合效果（使用外部SVG）
 	example4_WithFilters(marker, bgImg, svgData, outputDir)
+
+	// 示例5：内嵌SVG图标示例
+	example5_EmbeddedIcons(marker, bgImg, outputDir)
 
 	fmt.Println("所有示例已完成，输出图像保存在", outputDir, "目录")
 }
@@ -375,6 +391,88 @@ func example4_WithFilters(marker *core.IconMarker, bgImg image.Image, svgData []
 
 	// 保存结果
 	saveAsPNG(resultImg, filepath.Join(outputDir, "svg_text_with_filters.png"))
+}
+
+// 示例5：内嵌SVG图标示例
+func example5_EmbeddedIcons(marker *core.IconMarker, bgImg image.Image, outputDir string) {
+	// 获取所有可用的内嵌图标
+	iconNames, err := assets.ListAvailableIcons()
+	if err != nil {
+		fmt.Printf("获取图标列表失败: %v\n", err)
+		return
+	}
+
+	// 创建图像
+	bounds := bgImg.Bounds()
+	img := image.NewRGBA(bounds)
+	draw.Draw(img, bounds, bgImg, image.Point{}, draw.Src)
+
+	// 添加标题
+	titleOpt := core.DrawTextOption{
+		FontColor: color.RGBA{R: 255, G: 255, B: 255, A: 255},
+		Text:      "内嵌SVG图标示例",
+		XOffset:   0,
+		YOffset:   -bounds.Dy() / 3, // 放在上方
+	}.SetStaticSize(48).AddOutline(color.RGBA{R: 0, G: 0, B: 0, A: 255}, 3)
+
+	if err := core.DrawCenteredFont(nil, img, titleOpt); err != nil {
+		fmt.Printf("渲染标题失败: %v\n", err)
+		return
+	}
+
+	// 实例化SVG渲染器
+	resourceMgr := marker.GetResourceManager()
+	svgRenderer := renderer.NewSVGRenderer(resourceMgr)
+
+	// 水平排列图标
+	iconSize := 120
+	spacing := 40
+	totalWidth := len(iconNames) * (iconSize + spacing)
+	startX := (bounds.Dx() - totalWidth) / 2
+
+	// 渲染每个图标
+	for i, name := range iconNames {
+		// 获取图标数据
+		iconData, err := assets.GetSVGIcon(name)
+		if err != nil {
+			fmt.Printf("获取图标 %s 失败: %v\n", name, err)
+			continue
+		}
+
+		// 计算位置
+		x := startX + i*(iconSize+spacing)
+		y := bounds.Dy()/2 - iconSize/2
+
+		// 设置渲染选项
+		svgOpts := &SVGRenderOpts{
+			SVGData:  iconData,
+			Width:    iconSize,
+			Height:   iconSize,
+			Position: image.Point{X: x, Y: y},
+		}
+
+		// 渲染SVG到图像
+		if err := renderSVGOnImage(svgRenderer, img, svgOpts); err != nil {
+			fmt.Printf("渲染图标 %s 失败: %v\n", name, err)
+			continue
+		}
+
+		// 添加图标名称
+		labelOpt := core.DrawTextOption{
+			FontColor: color.RGBA{R: 255, G: 255, B: 255, A: 255},
+			Text:      name,
+			XOffset:   x + iconSize/2 - bounds.Dx()/2, // 相对于中心点的x偏移
+			YOffset:   y + iconSize + 30,              // 图标下方30像素
+		}.SetStaticSize(20).AddOutline(color.RGBA{R: 0, G: 0, B: 0, A: 255}, 2)
+
+		if err := core.DrawCenteredFont(nil, img, labelOpt); err != nil {
+			fmt.Printf("渲染图标名称失败: %v\n", err)
+			continue
+		}
+	}
+
+	// 保存结果
+	saveAsPNG(img, filepath.Join(outputDir, "embedded_icons.png"))
 }
 
 // 打开图像文件

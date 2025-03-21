@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 外层菱形 -->
+  <path d="M256 52L412 256L256 460L100 256L256 52Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="18" stroke-linejoin="round"/>
+  <!-- 内层菱形 -->
+  <path d="M256 130L360 256L256 382L152 256L256 130Z" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="12" stroke-linejoin="round"/>
+  <!-- 中心点 -->
+  <circle cx="256" cy="256" r="32" fill="#A0A0A0"/>
+</svg> 

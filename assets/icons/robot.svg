@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 机器人头部 -->
+  <rect x="112" y="128" width="288" height="240" rx="32" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 机器人眼睛 -->
+  <circle cx="176" cy="200" r="24" fill="#A0A0A0"/>
+  <circle cx="336" cy="200" r="24" fill="#A0A0A0"/>
+  <!-- 机器人天线 -->
+  <path d="M192 128V80" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="192" cy="64" r="16" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="12"/>
+  <!-- 机器人嘴巴 -->
+  <path d="M176 280H336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <!-- 机器人底座 -->
+  <path d="M192 368V416" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M320 368V416" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M176 432H208" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M304 432H336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+</svg> 

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 评测文档 -->
+  <rect x="96" y="80" width="320" height="352" rx="32" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 评分星星 -->
+  <path d="M256 148L274.8 186.8L317.7 192.6L286.9 222.4L293.6 265.2L256 244.8L218.4 265.2L225.1 222.4L194.3 192.6L237.2 186.8L256 148Z" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="12" stroke-linejoin="round"/>
+  <!-- 评测行 -->
+  <path d="M160 304H352" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M160 352H352" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M160 400H256" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+</svg> 

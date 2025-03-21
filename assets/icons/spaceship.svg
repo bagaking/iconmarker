@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 飞船主体 -->
+  <path d="M256 128C192 128 128 192 128 256C128 320 192 384 256 384C320 384 384 320 384 256C384 192 320 128 256 128Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 飞船舱室 -->
+  <circle cx="256" cy="256" r="64" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="16"/>
+  <!-- 引擎喷射 -->
+  <path d="M160 304L128 336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M352 304L384 336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M256 384V416" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <!-- 飞船顶部天线 -->
+  <path d="M256 128V96" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <circle cx="256" cy="80" r="16" fill="#C4C4C4" stroke="#A0A0A0" stroke-width="12"/>
+  <!-- 飞船侧翼 -->
+  <path d="M384 256H416" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M96 256H128" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+</svg> 

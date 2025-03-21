@@ -81,13 +81,44 @@ go run main.go
 
 演示如何在同一个图像上组合SVG图标与文本，包括：
 - SVG图标在左，文本在右的布局
-- SVG图标在上，文本在下的布局
-- 文本环绕SVG图标的布局
+- SVG图标在上，文本在下的布局（使用内嵌菱形图标）
+- 文本环绕SVG图标的布局（使用内嵌位置标记图标）
 - 应用滤镜后组合SVG与文本
+- 展示所有内嵌SVG图标
 
 ```bash
 cd svg_with_text
 go run main.go
+```
+
+## 内嵌SVG图标
+
+IconMarker现在提供了内嵌的高质量SVG图标，无需每次都读取外部文件。这些图标特点包括：
+- 标准方形尺寸（512x512）
+- 背景透明
+- 使用简洁有质感的浅灰色（便于染色）
+- 具有设计感和功能性
+- 使用块面设计，避免细碎的细节
+
+可用的内嵌图标包括：
+- `diamond-marker`: 菱形标记图标
+- `location-pin`: 位置标记图标
+
+使用示例：
+```go
+import "github.com/bagaking/iconmarker/assets"
+
+// 获取菱形标记图标
+svgData, err := assets.GetDiamondMarker()
+
+// 获取位置标记图标
+svgData, err := assets.GetLocationPin()
+
+// 获取所有可用图标的名称列表
+iconNames, err := assets.ListAvailableIcons()
+
+// 通过名称获取任意图标
+svgData, err := assets.GetSVGIcon("diamond-marker")
 ```
 
 ## 运行所有示例

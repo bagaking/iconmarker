@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 北极星主体 -->
+  <path d="M256 96L283.9 203.1L390.5 203.1L303.3 270.9L331.1 378L256 310.2L180.9 378L208.7 270.9L121.5 203.1L228.1 203.1L256 96Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 光芒 -->
+  <path d="M256 64V32" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M256 480V448" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M480 256H448" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M64 256H32" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round"/>
+  <path d="M409.6 409.6L386.5 386.5" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M125.5 125.5L102.4 102.4" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M409.6 102.4L386.5 125.5" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <path d="M125.5 386.5L102.4 409.6" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+</svg> 

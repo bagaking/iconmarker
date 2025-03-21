@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 克苏鲁头部 -->
+  <path d="M160 224C160 172.8 202.8 128 256 128C309.2 128 352 172.8 352 224V320H160V224Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="20" stroke-linejoin="round"/>
+  <!-- 眼睛 -->
+  <circle cx="208" cy="224" r="24" fill="#A0A0A0"/>
+  <circle cx="304" cy="224" r="24" fill="#A0A0A0"/>
+  <!-- 触须 -->
+  <path d="M176 320C176 320 144 352 128 384C112 416 128 432 144 416C160 400 176 368 192 352" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M224 320C224 320 208 368 208 400C208 432 224 432 224 416C224 400 240 352 240 336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M256 320V400C256 416 272 416 272 400V336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M288 320C288 320 304 368 304 400C304 432 320 432 320 416C320 400 304 352 304 336" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M336 320C336 320 368 352 384 384C400 416 384 432 368 416C352 400 336 368 320 352" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- 翅膀 -->
+  <path d="M112 224C112 224 80 176 112 144C144 112 176 144 176 144" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M400 224C400 224 432 176 400 144C368 112 336 144 336 144" stroke="#A0A0A0" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+</svg> 

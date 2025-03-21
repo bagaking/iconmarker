@@ -43,14 +43,25 @@ func (f *TintFilter) Apply(img draw.Image, options FilterOption) error {
 			b8 := uint8(b >> 8)
 			a8 := uint8(a >> 8)
 
-			// Calculate luminance
+			// 如果像素完全透明，直接保留原样不处理
+			if a8 == 0 {
+				continue
+			}
+
+			// 根据不透明度调整tint影响程度
+			// 半透明像素应该比完全不透明的像素受到更少的tint影响
+			actualIntensity := intensity * float64(a8) / 255.0
+
+			// Calculate luminance from original RGB values
 			lum := float64(r8)*0.299 + float64(g8)*0.587 + float64(b8)*0.114
 
-			// Apply tint based on luminance and intensity
-			newR := uint8(math.Round(lum*(1-intensity) + float64(tintR)*intensity))
-			newG := uint8(math.Round(lum*(1-intensity) + float64(tintG)*intensity))
-			newB := uint8(math.Round(lum*(1-intensity) + float64(tintB)*intensity))
+			// Apply tint based on luminance and intensity, taking alpha into account
+			// 对于RGB值，我们混合原始亮度和目标颜色
+			newR := uint8(math.Round(lum*(1-actualIntensity) + float64(tintR)*actualIntensity))
+			newG := uint8(math.Round(lum*(1-actualIntensity) + float64(tintG)*actualIntensity))
+			newB := uint8(math.Round(lum*(1-actualIntensity) + float64(tintB)*actualIntensity))
 
+			// 设置新颜色，保留原始alpha值
 			img.Set(x, y, color.RGBA{newR, newG, newB, a8})
 		}
 	}

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- 背景透明 -->
+  <!-- 花朵中心 -->
+  <circle cx="256" cy="256" r="48" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16"/>
+  <!-- 花瓣 -->
+  <path d="M256 208C256 208 300 160 300 116C300 72 256 72 256 72C256 72 212 72 212 116C212 160 256 208 256 208Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M256 304C256 304 300 352 300 396C300 440 256 440 256 440C256 440 212 440 212 396C212 352 256 304 256 304Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M304 256C304 256 352 212 396 212C440 212 440 256 440 256C440 256 440 300 396 300C352 300 304 256 304 256Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+  <path d="M208 256C208 256 160 212 116 212C72 212 72 256 72 256C72 256 72 300 116 300C160 300 208 256 208 256Z" fill="#D9D9D9" stroke="#A0A0A0" stroke-width="16" stroke-linejoin="round"/>
+  <!-- 茎 -->
+  <path d="M256 304V368" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round"/>
+  <!-- 叶子 -->
+  <path d="M256 336C256 336 288 352 304 336C320 320 304 288 304 288" stroke="#A0A0A0" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+</svg> 
