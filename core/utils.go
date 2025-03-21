@@ -1,4 +1,4 @@
-package iconmarker
+package core
 
 import (
 	"bytes"

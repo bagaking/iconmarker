@@ -1,5 +1,4 @@
-// Package iconmarker - supports attaching text to existing images
-package iconmarker
+package core
 
 import (
 	"bytes"
@@ -10,6 +9,8 @@ import (
 	"io"
 	"os"
 
+	"github.com/bagaking/iconmarker/assets"
+
 	"golang.org/x/image/font"
 	"golang.org/x/image/math/fixed"
 
@@ -17,11 +18,27 @@ import (
 	"github.com/golang/freetype/truetype"
 )
 
+// CreateImg 是旧API的兼容函数，未来应该使用 IconMarker.CreateImg
 func CreateImg(fontBytes, backgroundBytes []byte, drawFontOpt ...DrawTextOption) (*image.RGBA, error) {
-	// Parse font file
-	font, err := freetype.ParseFont(fontBytes)
-	if err != nil {
-		return nil, fmt.Errorf("%w, error parsing font file", err)
+	var font *truetype.Font
+	var err error
+
+	// 如果字体字节数组为空，尝试加载默认字体
+	if len(fontBytes) == 0 {
+		defaultFontBytes, err := assets.GetDefaultFont()
+		if err != nil {
+			return nil, fmt.Errorf("failed to get default font: %w", err)
+		}
+		font, err = freetype.ParseFont(defaultFontBytes)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse default font: %w", err)
+		}
+	} else {
+		// 解析用户提供的字体
+		font, err = freetype.ParseFont(fontBytes)
+		if err != nil {
+			return nil, fmt.Errorf("%w, error parsing font file", err)
+		}
 	}
 
 	// Parse bg image
@@ -165,6 +182,20 @@ func adaptSize(f *truetype.Font, text string, maxW, maxH int, fontSize float64) 
 // its also possible to draw text with different effects,
 // see DrawTextOption
 func DrawCenteredFont(f *truetype.Font, outI *image.RGBA, opt DrawTextOption) error {
+	// 如果传入的字体为nil，尝试加载默认字体
+	if f == nil {
+		fontData, err := assets.GetDefaultFont()
+		if err != nil {
+			return fmt.Errorf("failed to get default font: %w", err)
+		}
+
+		var parseErr error
+		f, parseErr = freetype.ParseFont(fontData)
+		if parseErr != nil {
+			return fmt.Errorf("failed to parse default font: %w", parseErr)
+		}
+	}
+
 	if opt.MaxWidth > 0 {
 		opt.FontSize = adaptSize(f, opt.Text, opt.MaxWidth, opt.MaxHeight, opt.FontSize)
 	} else if opt.FontSize < 1 {
