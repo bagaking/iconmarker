@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"image/color"
+	"strconv"
 	"strings"
 )
 
@@ -12,27 +13,34 @@ func ParseHexColor(colorStr string) (color.RGBA, error) {
 	// 移除#号
 	colorStr = strings.TrimPrefix(colorStr, "#")
 
-	// 确保字符串长度为6或8
-	if len(colorStr) != 6 && len(colorStr) != 8 {
+	// 支持 CSS 常见的 3/4 位简写以及完整的 6/8 位形式。
+	if len(colorStr) != 3 && len(colorStr) != 4 && len(colorStr) != 6 && len(colorStr) != 8 {
 		return color.RGBA{}, fmt.Errorf("invalid color format: %s", colorStr)
 	}
 
-	// 解析RGB值
-	var r, g, b, a uint8
-	if len(colorStr) == 6 {
-		_, err := fmt.Sscanf(colorStr, "%02x%02x%02x", &r, &g, &b)
-		if err != nil {
-			return color.RGBA{}, fmt.Errorf("failed to parse RGB values: %v", err)
+	// 解析 RGB(A) 值；ParseUint 能严格拒绝非十六进制字符和溢出。
+	components := make([]string, 0, 4)
+	if len(colorStr) == 3 || len(colorStr) == 4 {
+		for _, r := range colorStr {
+			components = append(components, string([]rune{r, r}))
 		}
-		a = 255 // 默认不透明
 	} else {
-		_, err := fmt.Sscanf(colorStr, "%02x%02x%02x%02x", &r, &g, &b, &a)
-		if err != nil {
-			return color.RGBA{}, fmt.Errorf("failed to parse RGBA values: %v", err)
+		for i := 0; i < len(colorStr); i += 2 {
+			components = append(components, colorStr[i:i+2])
 		}
 	}
-
-	return color.RGBA{R: r, G: g, B: b, A: a}, nil
+	values := make([]uint8, len(components))
+	for i, component := range components {
+		parsed, err := strconv.ParseUint(component, 16, 8)
+		if err != nil {
+			return color.RGBA{}, fmt.Errorf("failed to parse color component %q: %w", component, err)
+		}
+		values[i] = uint8(parsed)
+	}
+	if len(values) == 3 {
+		return color.RGBA{R: values[0], G: values[1], B: values[2], A: 255}, nil
+	}
+	return color.RGBA{R: values[0], G: values[1], B: values[2], A: values[3]}, nil
 }
 
 // LerpColor 在两个颜色之间进行线性插值
@@ -46,10 +54,10 @@ func LerpColor(c1, c2 color.RGBA, t float64) color.RGBA {
 	}
 
 	return color.RGBA{
-		R: uint8(float64(c1.R) + t*float64(c2.R-c1.R)),
-		G: uint8(float64(c1.G) + t*float64(c2.G-c1.G)),
-		B: uint8(float64(c1.B) + t*float64(c2.B-c1.B)),
-		A: uint8(float64(c1.A) + t*float64(c2.A-c1.A)),
+		R: uint8(float64(c1.R) + t*(float64(c2.R)-float64(c1.R))),
+		G: uint8(float64(c1.G) + t*(float64(c2.G)-float64(c1.G))),
+		B: uint8(float64(c1.B) + t*(float64(c2.B)-float64(c1.B))),
+		A: uint8(float64(c1.A) + t*(float64(c2.A)-float64(c1.A))),
 	}
 }
 
