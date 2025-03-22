@@ -93,26 +93,18 @@ go run main.go
 
 ## 内嵌SVG图标
 
-IconMarker现在提供了内嵌的高质量SVG图标，无需每次都读取外部文件。这些图标特点包括：
-- 标准方形尺寸（512x512）
-- 背景透明
-- 使用简洁有质感的浅灰色（便于染色）
-- 具有设计感和功能性
-- 使用块面设计，避免细碎的细节
-
-可用的内嵌图标包括：
-- `diamond-marker`: 菱形标记图标
-- `location-pin`: 位置标记图标
+IconMarker 提供 22 个内嵌 SVG 图标，无需读取外部文件。以
+`assets.AllIcons()` 或 `assets.ListAvailableIcons()` 获取完整清单。
 
 使用示例：
 ```go
 import "github.com/bagaking/iconmarker/assets"
 
-// 获取菱形标记图标
-svgData, err := assets.GetDiamondMarker()
+// 使用类型安全的枚举加载图标
+svgData, err := assets.IconDiamondMarker.Load()
 
-// 获取位置标记图标
-svgData, err := assets.GetLocationPin()
+// 也可按名称读取
+locationData, err := assets.GetSVGIcon("location-pin")
 
 // 获取所有可用图标的名称列表
 iconNames, err := assets.ListAvailableIcons()
@@ -138,7 +130,7 @@ svgData, err := assets.GetSVGIcon("diamond-marker")
 - `icon.svg`: 用于SVG渲染示例的图标
 - `font.ttf`: 用于文本渲染的字体文件
 
-**关于字体文件**: 设置脚本会尝试从网络下载Google的开源Roboto字体。如果下载失败，你需要手动下载或提供一个TTF字体文件，并将其命名为 `font.ttf` 放在 `assets` 目录中。注意，即使没有提供字体文件，文本渲染功能也能正常工作，因为项目现在内置了默认的 M PLUS Rounded 1c 字体。所有文本渲染示例已经增强了错误处理，可以自动使用内置字体。
+**关于字体文件**：示例可读取 `font.ttf`，库本身也内嵌了阿里巴巴普惠体作为默认字体；调用文本 API 时传入空字体字节即可使用默认字体。
 
 ## 自定义示例
 
@@ -151,6 +143,6 @@ svgData, err := assets.GetSVGIcon("diamond-marker")
 
 ## 注意事项
 
-- 所有示例都需要Go 1.16或更高版本
+- 所有示例都需要 Go 1.23 或更高版本
 - 确保在运行示例前已通过`go mod tidy`安装所有依赖
-- 如果您在运行示例时遇到问题，请查看IconMarker的文档或提交issue 
+- 如果您在运行示例时遇到问题，请查看IconMarker的文档或提交issue

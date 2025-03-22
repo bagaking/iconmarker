@@ -1,111 +1,131 @@
-# ICON MARKAR 
+# IconMarker
 
-iconmarker supports attaching text to existing images and applying various filters
+IconMarker is a small Go library for drawing centered text on JPEG backgrounds,
+rendering embedded or custom SVG icons, and applying composable image filters.
+It includes an embedded default font and 22 embedded SVG icons.
 
-## Basic Usage
+Requires Go 1.23 or newer.
 
-```go
-package main
+## Install
 
-import "github.com/bagaking/iconmarker"
-
-func main() {
-    // ...
-	return iconmarker.CreateImg(
-		fontBytes,
-		imgBytes,
-		iconmarker.DrawTextOption{
-			FontColor: color.RGBA{R: 200, G: 255, B: 255, A: 255},
-			Text:      "Hello World",
-		}.SetAdaptedSize(600, 300).AddOutline(color.RGBA{R: 16, G: 16, B: 16, A: 255}, 4),
-		iconmarker.DrawTextOption{
-			FontColor: color.RGBA{R: 210, G: 64, B: 32, A: 255},
-			Text:      "iconmarker example",
-			YOffset:   256,
-		}.SetAdaptedSize(680, 80).AddShadow(color.RGBA{R: 128, G: 128, B: 128, A: 128}, ico.TitleShadowWidth),
-		iconmarker.DrawTextOption{
-			FontColor: color.RGBA{R: 64, G: 64, B: 45, A: 255},
-			Text:      "from bagaking",
-			YOffset:   320, 
-		}.SetStaticSize(32),
-	)
-}
+```bash
+go get github.com/bagaking/iconmarker
 ```
 
-## Image Filters
+## Draw text
 
-The library includes a powerful filter system that allows you to apply various effects to your images:
-
-### Available Filters
-
-1. **Grayscale Filter** - Converts images to grayscale with optional alpha preservation
-2. **Tint Filter** - Applies a color tint with adjustable intensity
-3. **Opacity Filter** - Adjusts the transparency of images
-4. **Invert Filter** - Inverts image colors with optional alpha inversion
-5. **Composite Filter** - Combines multiple filters in sequence
-
-### Using Filters
+`CreateImg` keeps the original package-level API. Pass an empty font slice to
+use the embedded default font; the background is JPEG data.
 
 ```go
-package main
-
-import (
-    "image"
-    "image/png"
-    "os"
-    
-    "github.com/bagaking/iconmarker/filter"
+img, err := iconmarker.CreateImg(
+    nil,
+    jpegBytes,
+    iconmarker.DrawTextOption{
+        Text:      "Hello, IconMarker",
+        FontColor: color.RGBA{R: 255, G: 255, B: 255, A: 255},
+    }.
+        SetAdaptedSize(600, 120).
+        AddOutline(color.RGBA{A: 255}, 2),
 )
-
-func main() {
-    // Load your image
-    // ...
-    
-    // Create a filter manager
-    filterManager := filter.NewFilterManager()
-    
-    // Apply a single filter
-    grayImage, err := filterManager.QuickGrayscale(originalImage)
-    
-    // Apply a tint with custom color and intensity
-    tintedImage, err := filterManager.QuickTint(originalImage, [3]uint8{255, 0, 0}, 0.7) // Red tint at 70% intensity
-    
-    // Apply multiple filters in sequence
-    multiFilteredImage, err := filterManager.ApplyFilters(
-        originalImage,
-        []string{"grayscale", "tint"},
-        []filter.FilterOption{
-            filter.GrayscaleOption{PreserveAlpha: true},
-            filter.TintOption{
-                Color:     [3]uint8{0, 0, 255}, // Blue tint
-                Intensity: 0.5,
-            },
-        },
-    )
-    
-    // Save the result
-    // ...
+if err != nil {
+    return err
+}
+if err := iconmarker.SaveImage2File(img, "output.png", png.Encode); err != nil {
+    return err
 }
 ```
 
-### Creating Custom Filters
-
-You can create custom filters by implementing the `filter.Filter` interface:
+For an instance with its own filters and caches:
 
 ```go
-type MyCustomFilter struct{}
+marker := iconmarker.NewIconMarker()
+img, err := marker.CreateImgWithFilters(
+    nil,
+    jpegBytes,
+    []string{"grayscale", "tint"},
+    []filter.FilterOption{
+        filter.GrayscaleOption{PreserveAlpha: true},
+        filter.TintOption{Color: [3]uint8{40, 100, 255}, Intensity: 0.35},
+    },
+    iconmarker.DrawTextOption{Text: "TDD", FontColor: color.White}.SetStaticSize(48),
+)
+```
 
-func NewMyCustomFilter() *MyCustomFilter {
-    return &MyCustomFilter{}
+## Render SVG
+
+```go
+marker := iconmarker.NewIconMarker()
+svgData, err := assets.IconDiamondMarker.Load()
+if err != nil {
+    return err
 }
 
-func (f *MyCustomFilter) Apply(img draw.Image, options filter.FilterOption) error {
-    // Implement your custom filter logic here
+svgRenderer := renderer.NewSVGRenderer(marker.GetResourceManager())
+svgImage, err := svgRenderer.Render(renderer.SVGRenderOptions{
+    SVGData: svgData,
+    Width:   128,
+    Height:  128,
+})
+```
+
+Use `assets.AllIcons()` for the typed icon list or
+`assets.ListAvailableIcons()` for names.
+
+## Render text directly
+
+The renderer API keeps font bytes and text color as separate fields:
+
+```go
+textRenderer := renderer.NewTextRenderer(marker.GetResourceManager())
+textImage, err := textRenderer.Render(renderer.TextRenderOptions{
+    Text:      "Hello",
+    Width:     320,
+    Height:    100,
+    FontColor: color.White,
+    FontSize:  42,
+    // FontData is optional; empty uses the embedded default font.
+})
+```
+
+## Filters
+
+Built-in names are `grayscale`, `tint`, `opacity`, `invert`, and `composite`.
+Filter application returns a new RGBA image and leaves the source unchanged.
+
+```go
+manager := filter.NewFilterManager()
+result, err := manager.ApplyFilters(
+    source,
+    []string{"grayscale", "opacity"},
+    []filter.FilterOption{
+        filter.GrayscaleOption{PreserveAlpha: true},
+        filter.OpacityOption{Opacity: 0.8},
+    },
+)
+```
+
+Custom filters implement `filter.Filter` and are registered by name:
+
+```go
+type MyFilter struct{}
+
+func (MyFilter) Apply(img draw.Image, option filter.FilterOption) error {
+    // Mutate img or return an explanatory error.
     return nil
 }
 
-// Register your custom filter
-filterManager.Register("my-custom-filter", NewMyCustomFilter())
+manager.Register("mine", MyFilter{})
 ```
 
-See the examples directory for more detailed usage examples.
+## Development
+
+```bash
+go test ./... -count=1
+go test -race ./...
+go vet ./...
+```
+
+Runnable examples live in [`examples`](examples/README.md). They use the
+fixtures in `examples/assets`; `examples/run_examples.sh` exits non-zero if any
+example fails.
