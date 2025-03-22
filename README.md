@@ -1,6 +1,12 @@
-# ICON MARKAR 
+# Iconmarker
 
 iconmarker supports attaching text to existing images and applying various filters
+
+## Local Validation
+
+```sh
+go test ./...
+```
 
 ## Basic Usage
 
