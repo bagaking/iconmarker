@@ -10,4 +10,5 @@ var (
 	ErrInvalidColor          = errors.New("invalid color")
 	ErrNoFiltersSpecified    = errors.New("no filters specified")
 	ErrFilterOptionsMismatch = errors.New("number of filter options must match number of filters")
+	ErrNilImage              = errors.New("image is nil")
 )

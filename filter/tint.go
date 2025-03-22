@@ -47,6 +47,12 @@ func (f *TintFilter) Apply(img draw.Image, options FilterOption) error {
 			if a8 == 0 {
 				continue
 			}
+			// Intensity 0 is explicitly a no-op.  In particular, do not route
+			// the pixel through the luminance calculation below, which would turn
+			// a zero-strength tint into an unintended grayscale filter.
+			if intensity == 0 {
+				continue
+			}
 
 			// 根据不透明度调整tint影响程度
 			// 半透明像素应该比完全不透明的像素受到更少的tint影响

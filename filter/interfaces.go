@@ -3,6 +3,7 @@ package filter
 
 import (
 	"image/draw"
+	"sync"
 )
 
 // FilterOption defines options for filtering operations
@@ -72,6 +73,7 @@ func (o InvertOption) ValidateOption() error {
 // FilterManager manages and applies filters to images
 type FilterManager struct {
 	filters map[string]Filter
+	mu      sync.RWMutex
 }
 
 // NewFilterManager creates a new filter manager
@@ -85,23 +87,31 @@ func NewFilterManager() *FilterManager {
 	manager.Register("tint", NewTintFilter())
 	manager.Register("opacity", NewOpacityFilter())
 	manager.Register("invert", NewInvertFilter())
+	manager.Register("composite", NewCompositeFilter())
 
 	return manager
 }
 
 // Register registers a filter with a name
 func (m *FilterManager) Register(name string, filter Filter) {
+	m.mu.Lock()
+	defer m.mu.Unlock()
 	m.filters[name] = filter
 }
 
 // Get returns a filter by name
 func (m *FilterManager) Get(name string) (Filter, bool) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
 	filter, ok := m.filters[name]
 	return filter, ok
 }
 
 // Apply applies a named filter to an image
 func (m *FilterManager) Apply(img draw.Image, name string, options FilterOption) error {
+	if img == nil {
+		return ErrNilImage
+	}
 	filter, ok := m.Get(name)
 	if !ok {
 		return ErrFilterNotFound
