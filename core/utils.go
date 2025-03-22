@@ -1,12 +1,13 @@
 package core
 
 import (
-	"bytes"
 	"encoding/base64"
 	"fmt"
-	"io"
+	"go/token"
 	"os"
 	"path/filepath"
+	"strings"
+	"unicode"
 )
 
 var PersistStr = `package main
@@ -25,42 +26,30 @@ func Base642Bytes(s string) ([]byte, error) {
 
 // SaveValToFile saves base64 string to file
 func SaveValToFile(fileName, valName string, content []byte) error {
+	if strings.TrimSpace(fileName) == "" {
+		return fmt.Errorf("file name is empty")
+	}
+	if valName == "" {
+		base := filepath.Base(fileName)
+		// Keep the extension in the source name (sanitized below) so two files
+		// such as icon.svg and icon.json do not silently collide.
+		valName = base
+	}
+	valName = goIdentifier(valName)
 	stData := Bytes2Base64(content)
 	str := fmt.Sprintf(PersistStr, valName, stData)
 
-	fName := filepath.Base(fileName)
-	if valName == "" {
-		valName = fName
+	outputPath := filepath.Join(filepath.Dir(fileName), filepath.Base(fileName)+".go")
+	if err := os.WriteFile(outputPath, []byte(str), 0o644); err != nil {
+		return fmt.Errorf("write generated file %q: %w", outputPath, err)
 	}
-	fName = filepath.Join(filepath.Dir(fileName), fName+".go")
-	fmt.Println("======== export name:", fName)
-
-	file, err := os.Create(fName)
-	if err != nil {
-		return err
-	}
-	defer file.Close()
-
-	_, err = file.WriteString(str)
-	if err != nil {
-		return err
-	}
-
 	return nil
 }
 
 // PersistFile persists file to base64 string
 func PersistFile(fileName, valName string) error {
-	// Read file
-	data := make([]byte, 0)
-	file, err := os.Open(fileName)
+	data, err := os.ReadFile(fileName)
 	if err != nil {
-		return fmt.Errorf("%w, error reading font file", err)
-	}
-	defer file.Close()
-
-	// copy form file to data
-	if _, err = io.Copy(bytes.NewBuffer(data), file); err != nil {
 		return fmt.Errorf("%w, error reading font file", err)
 	}
 
@@ -70,4 +59,38 @@ func PersistFile(fileName, valName string) error {
 	}
 
 	return nil
+}
+
+// goIdentifier turns a file- or user-supplied name into a valid Go variable
+// identifier.  Persisted resources are source code, so silently emitting
+// "var  =" or a name containing a dot would create an unusable generated file.
+func goIdentifier(name string) string {
+	name = strings.TrimSpace(name)
+	if name == "" {
+		return "data"
+	}
+
+	var b strings.Builder
+	for i, r := range []rune(name) {
+		if r == '_' || unicode.IsLetter(r) || (i > 0 && unicode.IsDigit(r)) {
+			b.WriteRune(r)
+			continue
+		}
+		// Preserve a leading digit after prefixing an underscore; replacing it
+		// outright would make distinct names such as 1a and 2a collide.
+		if i == 0 && unicode.IsDigit(r) {
+			b.WriteByte('_')
+			b.WriteRune(r)
+			continue
+		}
+		b.WriteByte('_')
+	}
+	result := b.String()
+	if result == "" {
+		result = "data"
+	}
+	if token.IsKeyword(result) {
+		result += "_"
+	}
+	return result
 }

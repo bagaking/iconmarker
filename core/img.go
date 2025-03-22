@@ -78,6 +78,15 @@ func CreateImg(fontBytes, backgroundBytes []byte, drawFontOpt ...DrawTextOption)
 // var buf bytes.Buffer
 // err = png.Encode(&buf, img)
 func SaveImage2File(img image.Image, path string, encoder func(io.Writer, image.Image) error) error {
+	if img == nil {
+		return fmt.Errorf("image is nil")
+	}
+	if encoder == nil {
+		return fmt.Errorf("image encoder is nil")
+	}
+	if path == "" {
+		return fmt.Errorf("output path is empty")
+	}
 	outputFile, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("%w, error creating output file", err)
