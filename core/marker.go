@@ -121,7 +121,7 @@ func (im *IconMarker) CreateImgWithFilters(fontBytes, backgroundBytes []byte,
 
 		// 如果不是RGBA，转换它
 		resultImg := image.NewRGBA(filteredImg.Bounds())
-		draw.Draw(resultImg, resultImg.Bounds(), filteredImg, image.Point{}, draw.Src)
+		draw.Draw(resultImg, resultImg.Bounds(), filteredImg, filteredImg.Bounds().Min, draw.Src)
 		return resultImg, nil
 	}
 
@@ -148,7 +148,7 @@ func (im *IconMarker) ApplyFilter(img image.Image, filterName string, option fil
 	// 创建一个新的RGBA图像
 	bounds := img.Bounds()
 	dst := image.NewRGBA(bounds)
-	draw.Draw(dst, dst.Bounds(), img, image.Point{}, draw.Src)
+	draw.Draw(dst, dst.Bounds(), img, bounds.Min, draw.Src)
 
 	// 应用滤镜
 	if err := im.filterManager.Apply(dst, filterName, option); err != nil {
