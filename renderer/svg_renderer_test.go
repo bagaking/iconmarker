@@ -84,6 +84,34 @@ func TestSVGRendererRenderReturnsRequestedBounds(t *testing.T) {
 	}
 }
 
+func TestSVGRendererRenderCachesIndependentSVGData(t *testing.T) {
+	renderer := NewSVGRenderer(cache.NewResourceManager(4, 4, 4))
+	svgText := `<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"><rect width="10" height="10" fill="red"/></svg>`
+	svgData := []byte(svgText)
+	opt := stubSVGOption{
+		svgData: svgData,
+		width:   10,
+		height:  10,
+	}
+
+	if _, err := renderer.Render(opt); err != nil {
+		t.Fatalf("SVGRenderer.Render(%dx%d valid svg before caller mutation) error = %v, want nil", opt.width, opt.height, err)
+	}
+
+	for i := range svgData {
+		svgData[i] = 0
+	}
+
+	opt.svgData = []byte(svgText)
+	got, err := renderer.Render(opt)
+	if err != nil {
+		t.Fatalf("SVGRenderer.Render(%dx%d cached svg from fresh caller data after prior caller mutation) error = %v, want nil", opt.width, opt.height, err)
+	}
+	if got.Bounds() != image.Rect(0, 0, opt.width, opt.height) {
+		t.Errorf("SVGRenderer.Render(%dx%d cached svg from fresh caller data after prior caller mutation).Bounds() = %v, want %v", opt.width, opt.height, got.Bounds(), image.Rect(0, 0, opt.width, opt.height))
+	}
+}
+
 func TestSVGRendererRenderMultipleReportsIndexedError(t *testing.T) {
 	renderer := NewSVGRenderer(cache.NewResourceManager(4, 4, 4))
 	options := []SVGRenderOption{
