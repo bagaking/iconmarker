@@ -8,6 +8,24 @@ func (i testCacheItem) Size() int {
 	return int(i)
 }
 
+type mutableResource struct {
+	data []byte
+}
+
+func (r *mutableResource) Size() int {
+	return len(r.data)
+}
+
+func (r *mutableResource) Clone() Resource {
+	if r == nil {
+		return (*mutableResource)(nil)
+	}
+
+	data := make([]byte, len(r.data))
+	copy(data, r.data)
+	return &mutableResource{data: data}
+}
+
 func TestLRUCacheEvictsLeastRecentlyUsedItem(t *testing.T) {
 	cache := NewLRUCache(2)
 
@@ -93,5 +111,46 @@ func TestLRUCacheRejectsZeroCapacityPuts(t *testing.T) {
 	}
 	if size := cache.Size(); size != 0 {
 		t.Fatalf("expected size 0, got %d", size)
+	}
+}
+
+func TestLRUCacheClonesResourcesOnPut(t *testing.T) {
+	cache := NewLRUCache(1)
+	resource := &mutableResource{data: []byte("cached")}
+
+	if !cache.Put("resource", resource) {
+		t.Fatal("expected put to succeed")
+	}
+	resource.data[0] = 'm'
+
+	item, ok := cache.Get("resource")
+	if !ok {
+		t.Fatal("expected resource to be cached")
+	}
+	got := item.(*mutableResource)
+	if string(got.data) != "cached" {
+		t.Fatalf("expected cached resource to be isolated from caller mutation, got %q", got.data)
+	}
+}
+
+func TestLRUCacheClonesResourcesOnGet(t *testing.T) {
+	cache := NewLRUCache(1)
+	if !cache.Put("resource", &mutableResource{data: []byte("cached")}) {
+		t.Fatal("expected put to succeed")
+	}
+
+	item, ok := cache.Get("resource")
+	if !ok {
+		t.Fatal("expected resource to be cached")
+	}
+	item.(*mutableResource).data[0] = 'm'
+
+	item, ok = cache.Get("resource")
+	if !ok {
+		t.Fatal("expected resource to remain cached")
+	}
+	got := item.(*mutableResource)
+	if string(got.data) != "cached" {
+		t.Fatalf("expected cached resource to be isolated from returned item mutation, got %q", got.data)
 	}
 }

@@ -32,20 +32,18 @@ func NewLRUCache(capacity int) *LRUCache {
 
 // Get retrieves an item from cache
 func (c *LRUCache) Get(key string) (CacheItem, bool) {
-	c.mu.RLock()
-	item, found := c.items[key]
-	c.mu.RUnlock()
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
+	item, found := c.items[key]
 	if !found {
 		return nil, false
 	}
 
 	// Move item to front (most recently used)
-	c.mu.Lock()
 	c.moveToFront(item)
-	c.mu.Unlock()
 
-	return item.value, true
+	return cloneCacheItem(item.value), true
 }
 
 // Put adds or updates an item in cache
@@ -59,7 +57,7 @@ func (c *LRUCache) Put(key string, value CacheItem) bool {
 
 	// Check if item already exists
 	if item, found := c.items[key]; found {
-		item.value = value
+		item.value = cloneCacheItem(value)
 		c.moveToFront(item)
 		return true
 	}
@@ -67,7 +65,7 @@ func (c *LRUCache) Put(key string, value CacheItem) bool {
 	// Create new item
 	item := &lruItem{
 		key:   key,
-		value: value,
+		value: cloneCacheItem(value),
 	}
 
 	// Add to cache
@@ -180,4 +178,12 @@ func (c *LRUCache) removeItem(item *lruItem) {
 	if item == c.tail {
 		c.tail = item.prev
 	}
+}
+
+func cloneCacheItem(item CacheItem) CacheItem {
+	resource, ok := item.(Resource)
+	if !ok {
+		return item
+	}
+	return resource.Clone()
 }
