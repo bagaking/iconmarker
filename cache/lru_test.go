@@ -1,6 +1,11 @@
 package cache
 
-import "testing"
+import (
+	"fmt"
+	"math/rand"
+	"sync"
+	"testing"
+)
 
 type testCacheItem int
 
@@ -18,12 +23,40 @@ func (r *mutableResource) Size() int {
 
 func (r *mutableResource) Clone() Resource {
 	if r == nil {
-		return (*mutableResource)(nil)
+		return &mutableResource{}
 	}
 
 	data := make([]byte, len(r.data))
 	copy(data, r.data)
 	return &mutableResource{data: data}
+}
+
+type stressResource struct {
+	data []byte
+}
+
+func newStressResource(worker, iteration int) *stressResource {
+	data := make([]byte, 256)
+	for i := range data {
+		data[i] = byte(worker + iteration + i)
+	}
+	return &stressResource{data: data}
+}
+
+func (r *stressResource) Size() int {
+	return len(r.data)
+}
+
+func (r *stressResource) Clone() Resource {
+	data := make([]byte, len(r.data))
+	copy(data, r.data)
+	return &stressResource{data: data}
+}
+
+func (r *stressResource) mutate(seed byte) {
+	for i := range r.data {
+		r.data[i] ^= seed + byte(i)
+	}
 }
 
 func TestLRUCacheEvictsLeastRecentlyUsedItem(t *testing.T) {
@@ -153,4 +186,63 @@ func TestLRUCacheClonesResourcesOnGet(t *testing.T) {
 	if string(got.data) != "cached" {
 		t.Fatalf("expected cached resource to be isolated from returned item mutation, got %q", got.data)
 	}
+}
+
+func TestLRUCacheConcurrentAccessStress(t *testing.T) {
+	const (
+		capacity   = 16
+		workers    = 12
+		iterations = 4000
+		keyCount   = 32
+	)
+
+	cache := NewLRUCache(capacity)
+	start := make(chan struct{})
+
+	var wg sync.WaitGroup
+	for worker := 0; worker < workers; worker++ {
+		worker := worker
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+
+			rng := rand.New(rand.NewSource(int64(worker + 1)))
+			<-start
+
+			for iteration := 0; iteration < iterations; iteration++ {
+				key := fmt.Sprintf("key-%02d", rng.Intn(keyCount))
+
+				switch rng.Intn(8) {
+				case 0, 1, 2:
+					resource := newStressResource(worker, iteration)
+					if ok := cache.Put(key, resource); !ok {
+						t.Errorf("LRUCache.Put(%q, resource) = false, want true", key)
+					}
+					resource.mutate(byte(iteration))
+				case 3, 4, 5:
+					item, ok := cache.Get(key)
+					if !ok {
+						continue
+					}
+					resource, ok := item.(*stressResource)
+					if !ok {
+						t.Errorf("LRUCache.Get(%q) item type = %T, want *stressResource", key, item)
+						continue
+					}
+					resource.mutate(byte(worker + iteration))
+				case 6:
+					cache.Remove(key)
+				default:
+					cache.Clear()
+				}
+
+				if size := cache.Size(); size < 0 || size > capacity {
+					t.Errorf("LRUCache.Size() = %d, want between 0 and %d", size, capacity)
+				}
+			}
+		}()
+	}
+
+	close(start)
+	wg.Wait()
 }
