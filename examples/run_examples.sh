@@ -23,6 +23,7 @@ fi
 # 提示
 echo -e "${GREEN}运行所有 IconMarker 示例${NC}"
 echo "=================================================="
+FAILED_EXAMPLES=()
 
 # 运行单文件示例
 run_single_example() {
@@ -41,6 +42,7 @@ run_single_example() {
     echo -e "${GREEN}✓ 成功运行: $example_name${NC}"
   else
     echo -e "${RED}✗ 运行失败: $example_name${NC}"
+    FAILED_EXAMPLES+=("$example_name")
   fi
   echo "--------------------------------------------------"
 }
@@ -65,6 +67,7 @@ run_dir_example() {
     echo -e "${GREEN}✓ 成功运行: $example_name${NC}"
   else
     echo -e "${RED}✗ 运行失败: $example_name${NC}"
+    FAILED_EXAMPLES+=("$example_name")
   fi
   
   # 返回原目录
@@ -90,5 +93,13 @@ for dir in */; do
   fi
 done
 
+if [ ${#FAILED_EXAMPLES[@]} -gt 0 ]; then
+  echo -e "${RED}以下示例运行失败:${NC}"
+  for example_name in "${FAILED_EXAMPLES[@]}"; do
+    echo -e "${RED}- $example_name${NC}"
+  done
+  exit 1
+fi
+
 echo -e "${GREEN}所有示例运行完成${NC}"
-echo "可以在各示例目录的output目录中查看输出文件" 
+echo "可以在各示例目录的output目录中查看输出文件"

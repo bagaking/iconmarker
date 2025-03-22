@@ -91,6 +91,24 @@ cd svg_with_text
 go run main.go
 ```
 
+### 7. 徽章示例 (badge)
+
+演示如何组合自定义SVG模板、文本和颜色生成状态徽章。
+
+```bash
+cd badge
+go run main.go
+```
+
+### 8. 图标仪表盘示例 (icon_dashboard)
+
+演示如何加载内嵌图标、应用滤镜，并将图标与文字组合到同一张图中。
+
+```bash
+cd icon_dashboard
+go run main.go
+```
+
 ## 内嵌SVG图标
 
 IconMarker现在提供了内嵌的高质量SVG图标，无需每次都读取外部文件。这些图标特点包括：
@@ -131,6 +149,8 @@ svgData, err := assets.GetSVGIcon("diamond-marker")
 
 所有示例的输出将保存在各自目录下的 `output` 文件夹中。
 
+`run_examples.sh` 会在任一示例失败时返回非零退出码，因此可以作为本地或 CI 中的示例验证命令。
+
 ## 资源文件
 
 示例使用的资源文件位于 `assets` 目录中：
@@ -151,6 +171,6 @@ svgData, err := assets.GetSVGIcon("diamond-marker")
 
 ## 注意事项
 
-- 所有示例都需要Go 1.16或更高版本
+- 所有示例都需要 `go.mod` 中声明的 Go 版本或更高版本
 - 确保在运行示例前已通过`go mod tidy`安装所有依赖
-- 如果您在运行示例时遇到问题，请查看IconMarker的文档或提交issue 
+- 如果您在运行示例时遇到问题，请查看IconMarker的文档或提交issue
