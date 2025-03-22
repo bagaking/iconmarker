@@ -56,7 +56,7 @@ go run main.go
 ### 4. 组合滤镜示例 (combined_filters)
 
 展示如何使用和组合多种滤镜，包括：
-- 使用内置组合滤镜
+- 使用 CompositeFilter 组合滤镜
 - 顺序应用多个滤镜
 - 使用自定义组合应用滤镜
 
