@@ -7,12 +7,16 @@ applying simple image filters. It exposes a compatibility package at
 
 ## Preview
 
-These checked-in outputs show the current visual baseline without requiring a
-local run first.
+These checked-in preview assets are documentation snapshots copied from
+runnable examples after running `bash examples/run_examples.sh`.
+`docs/assets/simple_icons_with_text.png` comes from the
+`examples/icon_dashboard` example's generated `simple_icons_with_text.png`
+file, and `docs/assets/badge_resolved.png` comes from the `examples/badge`
+example's generated `badge_resolved.png` file.
 
-| Icon dashboard | Simple icons with text |
+| Icon dashboard | Resolved badge |
 | --- | --- |
-| <img src="output/icon_dashboard.png" alt="Icon dashboard example output" width="360"> | <img src="output/simple_icons_with_text.png" alt="Simple icons with text example output" width="360"> |
+| <img src="docs/assets/simple_icons_with_text.png" alt="Simple icons with text example output" width="360"> | <img src="docs/assets/badge_resolved.png" alt="Resolved badge example output" width="260"> |
 
 ## Installation
 
@@ -102,9 +106,9 @@ The script writes generated files under each example's `output/` directory and
 returns a non-zero exit code if any example fails, so it is suitable for local
 smoke testing and CI.
 
-The two preview images in `output/` are intentionally checked in for README
-display. Per-example generated output files are artifacts and can be recreated
-with the commands above.
+Documentation preview images live under `docs/assets/`. Per-example output
+directories are generated artifacts and can be recreated with the commands
+above.
 
 ## API Notes
 

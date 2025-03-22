@@ -151,22 +151,25 @@ svgData, err := assets.GetSVGIcon("diamond-marker")
 
 `run_examples.sh` 会在任一示例失败时返回非零退出码，因此可以作为本地或 CI 中的示例验证命令。
 
-## 输出预览
+## 输出文件
 
-仓库保留了一组轻量示例输出，方便在不运行代码时快速确认视觉效果：
+示例输出不会作为基线文件提交到仓库。运行 `./run_examples.sh` 后，每个
+示例会在自己的 `output` 目录中生成本地文件：
 
-| 示例 | 输出 |
+| 示例 | 本地生成的输出 |
 | --- | --- |
-| `basic_text` | [`output/basic_text_new.jpg`](basic_text/output/basic_text_new.jpg), [`output/basic_text_legacy.jpg`](basic_text/output/basic_text_legacy.jpg) |
-| `text_effects` | [`output/text_shadow.jpg`](text_effects/output/text_shadow.jpg), [`output/text_outline.jpg`](text_effects/output/text_outline.jpg), [`output/text_combined_effects.jpg`](text_effects/output/text_combined_effects.jpg) |
-| `svg_rendering` | [`output/svg_original.jpg`](svg_rendering/output/svg_original.jpg), [`output/svg_resized.jpg`](svg_rendering/output/svg_resized.jpg), [`output/svg_filtered.jpg`](svg_rendering/output/svg_filtered.jpg) |
-| `combined_filters` | [`output/composite_filter.jpg`](combined_filters/output/composite_filter.jpg), [`output/sequential_filters.jpg`](combined_filters/output/sequential_filters.jpg), [`output/custom_composite.jpg`](combined_filters/output/custom_composite.jpg) |
-| `integrated_example` | [`output/old_api.png`](integrated_example/output/old_api.png), [`output/new_api_with_filters.png`](integrated_example/output/new_api_with_filters.png), [`output/inverted.png`](integrated_example/output/inverted.png), [`output/transparent.png`](integrated_example/output/transparent.png) |
-| `svg_with_text` | [`output/svg_left_text_right.jpg`](svg_with_text/output/svg_left_text_right.jpg), [`output/svg_top_text_bottom.jpg`](svg_with_text/output/svg_top_text_bottom.jpg), [`output/text_around_svg.jpg`](svg_with_text/output/text_around_svg.jpg), [`output/svg_text_with_filters.png`](svg_with_text/output/svg_text_with_filters.png), [`output/embedded_icons.png`](svg_with_text/output/embedded_icons.png) |
-| `badge` | [`output/badge.png`](badge/output/badge.png), [`output/badge_resolved.png`](badge/output/badge_resolved.png), [`output/badge_in_progress.png`](badge/output/badge_in_progress.png), [`output/badge_problem.png`](badge/output/badge_problem.png), [`output/badge_urgent.png`](badge/output/badge_urgent.png) |
-| `icon_dashboard` | [`output/simple_icons_with_text.png`](icon_dashboard/output/simple_icons_with_text.png) |
+| `basic_text` | `basic_text_new.jpg`, `basic_text_legacy.jpg` |
+| `text_effects` | `text_shadow.jpg`, `text_outline.jpg`, `text_combined_effects.jpg` |
+| `svg_rendering` | `svg_original.jpg`, `svg_resized.jpg`, `svg_filtered.jpg` |
+| `combined_filters` | `composite_filter.jpg`, `sequential_filters.jpg`, `custom_composite.jpg` |
+| `integrated_example` | `old_api.png`, `new_api_with_filters.png`, `inverted.png`, `transparent.png` |
+| `svg_with_text` | `svg_left_text_right.jpg`, `svg_top_text_bottom.jpg`, `text_around_svg.jpg`, `svg_text_with_filters.png`, `embedded_icons.png` |
+| `badge` | `badge_resolved.png`, `badge_in_progress.png`, `badge_problem.png`, `badge_urgent.png` |
+| `icon_dashboard` | `simple_icons_with_text.png` |
 
-CI 会运行同一个脚本，确保示例代码仍能基于仓库内的轻量资源成功生成输出。
+仓库根 README 使用的预览图位于 `../docs/assets/`，来源是运行示例后从
+`badge` 和 `icon_dashboard` 的本地输出复制得到。CI 会运行同一个脚本，
+确保示例代码仍能基于仓库内的轻量资源成功生成输出。
 
 ## 资源文件
 

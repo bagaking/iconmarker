@@ -18,5 +18,9 @@
 # Dependency directories (remove the comment below to include it)
 # vendor/
 
-output/
-examples/**/output
+output
+
+# Checked-in README preview snapshots live here; generated example outputs do not.
+!docs/
+!docs/assets/
+!docs/assets/**
