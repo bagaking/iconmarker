@@ -5,6 +5,15 @@ applying simple image filters. It exposes a compatibility package at
 `github.com/bagaking/iconmarker` and lower-level packages under `core` and
 `filter`.
 
+## Preview
+
+These checked-in outputs show the current visual baseline without requiring a
+local run first.
+
+| Icon dashboard | Simple icons with text |
+| --- | --- |
+| <img src="output/icon_dashboard.png" alt="Icon dashboard example output" width="360"> | <img src="output/simple_icons_with_text.png" alt="Simple icons with text example output" width="360"> |
+
 ## Installation
 
 ```sh
@@ -69,19 +78,19 @@ func main() {
 
 ## Examples Gallery
 
-The repository includes runnable examples with lightweight checked-in assets.
-They cover text layout, text effects, SVG rendering, composed filters, badges,
-and dashboard-style icon layouts.
+The repository includes runnable examples with lightweight source assets. They
+cover text layout, text effects, SVG rendering, composed filters, badges, and
+dashboard-style icon layouts.
 
-| Example | Shows | Sample output |
+| Example | Shows | Reproduce locally |
 | --- | --- | --- |
-| `examples/basic_text` | Legacy and current centered text APIs | [basic_text_new.jpg](examples/basic_text/output/basic_text_new.jpg) |
-| `examples/text_effects` | Shadows, outlines, and combined text effects | [text_combined_effects.jpg](examples/text_effects/output/text_combined_effects.jpg) |
-| `examples/svg_rendering` | SVG loading, resizing, and filter application | [svg_filtered.jpg](examples/svg_rendering/output/svg_filtered.jpg) |
-| `examples/combined_filters` | Composite and sequential filter pipelines | [composite_filter.jpg](examples/combined_filters/output/composite_filter.jpg) |
-| `examples/svg_with_text` | SVG and text layout combinations | [svg_left_text_right.jpg](examples/svg_with_text/output/svg_left_text_right.jpg) |
-| `examples/badge` | Status badge generation from SVG, text, and color | [badge.png](examples/badge/output/badge.png) |
-| `examples/icon_dashboard` | Embedded icons, filters, and labels in one image | [simple_icons_with_text.png](examples/icon_dashboard/output/simple_icons_with_text.png) |
+| `examples/basic_text` | Legacy and current centered text APIs | `cd examples/basic_text && go run main.go` |
+| `examples/text_effects` | Shadows, outlines, and combined text effects | `cd examples/text_effects && go run main.go` |
+| `examples/svg_rendering` | SVG loading, resizing, and filter application | `cd examples/svg_rendering && go run main.go` |
+| `examples/combined_filters` | Composite and sequential filter pipelines | `cd examples/combined_filters && go run main.go` |
+| `examples/svg_with_text` | SVG and text layout combinations | `cd examples/svg_with_text && go run main.go` |
+| `examples/badge` | Status badge generation from SVG, text, and color | `cd examples/badge && go run main.go` |
+| `examples/icon_dashboard` | Embedded icons, filters, and labels in one image | `cd examples/icon_dashboard && go run main.go` |
 
 Run all examples from the repository root:
 
@@ -92,6 +101,10 @@ bash examples/run_examples.sh
 The script writes generated files under each example's `output/` directory and
 returns a non-zero exit code if any example fails, so it is suitable for local
 smoke testing and CI.
+
+The two preview images in `output/` are intentionally checked in for README
+display. Per-example generated output files are artifacts and can be recreated
+with the commands above.
 
 ## API Notes
 
@@ -161,6 +174,10 @@ Run the test suite and example smoke test with:
 go test ./...
 bash examples/run_examples.sh
 ```
+
+`go test ./...` covers package-level behavior. `bash examples/run_examples.sh`
+proves that the public examples still compile and can write their generated
+outputs from the checked-in example assets.
 
 ## License
 
