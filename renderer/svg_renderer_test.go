@@ -56,6 +56,15 @@ func TestSVGRendererRenderRejectsInvalidOptions(t *testing.T) {
 	if err == nil || !strings.Contains(err.Error(), "invalid dimensions: width=0, height=10") {
 		t.Fatalf("SVGRenderer.Render(width=0 height=10) error = %v, want invalid dimensions error", err)
 	}
+
+	_, err = renderer.Render(stubSVGOption{
+		svgData: []byte(`<svg xmlns="http://www.w3.org/2000/svg"><path d="`),
+		width:   10,
+		height:  10,
+	})
+	if err == nil || !strings.Contains(err.Error(), "error parsing SVG") {
+		t.Fatalf("SVGRenderer.Render(malformed svg) error = %v, want parse error", err)
+	}
 }
 
 func TestSVGRendererRenderReturnsRequestedBounds(t *testing.T) {
