@@ -55,7 +55,7 @@ func (c *LRUCache) Get(key string) (CacheItem, bool) {
 	}
 
 	c.moveToFront(item)
-	return item.value, true
+	return cloneCacheItem(item.value), true
 }
 
 // Put adds or updates an item in cache
@@ -73,7 +73,7 @@ func (c *LRUCache) Put(key string, value CacheItem) bool {
 
 	// Check if item already exists
 	if item, found := c.items[key]; found {
-		item.value = value
+		item.value = cloneCacheItem(value)
 		item.expiresAt = expiresAt
 		c.moveToFront(item)
 		return true
@@ -82,7 +82,7 @@ func (c *LRUCache) Put(key string, value CacheItem) bool {
 	// Create new item
 	item := &lruItem{
 		key:       key,
-		value:     value,
+		value:     cloneCacheItem(value),
 		expiresAt: expiresAt,
 	}
 
@@ -248,4 +248,12 @@ func (c *LRUCache) purgeExpired(now time.Time) {
 			c.deleteItem(item)
 		}
 	}
+}
+
+func cloneCacheItem(item CacheItem) CacheItem {
+	resource, ok := item.(Resource)
+	if !ok {
+		return item
+	}
+	return resource.Clone()
 }

@@ -1,148 +1,129 @@
-# IconMarker 示例集
+# IconMarker Examples
 
-这个目录包含了 IconMarker 库的各种使用示例，展示了库的主要功能和用法。
+This directory is the reproducible gallery for IconMarker. Each example is a
+Go program that reads checked-in assets, writes generated files to a local
+`output/` directory, and can be run on its own or through `run_examples.sh`.
 
-## 快速开始
+Generated outputs are not committed baselines. The only checked-in preview
+snapshots are the two files under `../docs/assets/`, copied from the `badge`
+and `icon_dashboard` examples so the root README can show real output.
 
-直接运行设置脚本来准备环境和资源文件：
+## Run the gallery
 
-```bash
-./setup_and_run.sh
+From this directory:
+
+```sh
+bash run_examples.sh
 ```
 
-这个脚本会：
-1. 创建必要的测试资源文件（背景图片、SVG图标）和下载字体文件
-2. 为每个示例创建输出目录
-3. 设置正确的执行权限
-4. 询问是否要立即运行所有示例
+From the repository root:
 
-## 示例列表
+```sh
+bash examples/run_examples.sh
+```
 
-### 1. 基础文本示例 (basic_text)
+The script runs every child directory that contains a `main.go` file and exits
+non-zero if any example fails. Successful runs create or update `output/`
+directories inside the individual example folders.
 
-演示如何在图片上添加基本文本，包括：
-- 使用传统API添加文本
-- 使用新API添加文本
+If you need to create local fixture files first, `setup_and_run.sh` can prepare
+the `assets/` directory and then optionally run the gallery. The examples also
+work with the checked-in fixtures without that helper.
 
-```bash
+## Example gallery
+
+| Example | What it demonstrates | Generated files |
+| --- | --- | --- |
+| `basic_text` | centered text overlays through the compatibility API and the core API | `output/basic_text_legacy.jpg`, `output/basic_text_new.jpg` |
+| `text_effects` | text shadows, outlines, and combined effects | `output/text_shadow.jpg`, `output/text_outline.jpg`, `output/text_combined_effects.jpg` |
+| `svg_rendering` | rendering a checked-in SVG at original size, resized, and filtered | `output/svg_original.jpg`, `output/svg_resized.jpg`, `output/svg_filtered.jpg` |
+| `combined_filters` | composite filters, sequential filters, and a custom composite filter | `output/composite_filter.jpg`, `output/sequential_filters.jpg`, `output/custom_composite.jpg` |
+| `integrated_example` | old API, newer API, invert, and opacity outputs | `output/old_api.png`, `output/new_api_with_filters.png`, `output/inverted.png`, `output/transparent.png` |
+| `svg_with_text` | SVG/text layouts, filtered composition, and embedded icon sheets | `output/svg_left_text_right.jpg`, `output/svg_top_text_bottom.jpg`, `output/text_around_svg.jpg`, `output/svg_text_with_filters.png`, `output/embedded_icons.png` |
+| `badge` | status badge generation from SVG templates, colors, and text | `output/badge_urgent.png`, `output/badge_resolved.png`, `output/badge_in_progress.png`, `output/badge_problem.png` |
+| `icon_dashboard` | embedded icon loading, tinting, and label composition | `output/simple_icons_with_text.png` |
+
+## Run one example
+
+```sh
 cd basic_text
 go run main.go
 ```
 
-### 2. 文本效果示例 (text_effects)
+Use the same pattern for any example directory, for example:
 
-展示各种文本效果，包括：
-- 添加带阴影的文本
-- 添加带轮廓的文本
-- 组合使用阴影和轮廓效果
-
-```bash
-cd text_effects
+```sh
+cd badge
 go run main.go
 ```
 
-### 3. SVG渲染示例 (svg_rendering)
+## Embedded SVG icons
 
-展示如何渲染SVG图标到图片上，包括：
-- 渲染原始大小的SVG
-- 渲染调整大小的SVG
-- 应用滤镜后渲染SVG
+IconMarker provides 22 embedded SVG icons and does not require external icon
+files. Use `assets.AllIcons()` or `assets.ListAvailableIcons()` to enumerate
+them:
 
-```bash
-cd svg_rendering
-go run main.go
-```
-
-### 4. 组合滤镜示例 (combined_filters)
-
-展示如何使用和组合多种滤镜，包括：
-- 使用内置组合滤镜
-- 顺序应用多个滤镜
-- 使用自定义组合应用滤镜
-
-```bash
-cd combined_filters
-go run main.go
-```
-
-### 5. 整合示例 (integrated_example)
-
-展示如何综合使用IconMarker的各种功能，包括：
-- 传统API与新API的对比
-- 使用多种滤镜处理图像
-- 使用高级渲染功能
-
-```bash
-cd integrated_example
-go run main.go
-```
-
-### 6. SVG与文本组合示例 (svg_with_text)
-
-演示如何在同一个图像上组合SVG图标与文本，包括：
-- SVG图标在左，文本在右的布局
-- SVG图标在上，文本在下的布局（使用内嵌菱形图标）
-- 文本环绕SVG图标的布局（使用内嵌位置标记图标）
-- 应用滤镜后组合SVG与文本
-- 展示所有内嵌SVG图标
-
-```bash
-cd svg_with_text
-go run main.go
-```
-
-## 内嵌SVG图标
-
-IconMarker 提供 22 个内嵌 SVG 图标，无需读取外部文件。以
-`assets.AllIcons()` 或 `assets.ListAvailableIcons()` 获取完整清单。
-
-使用示例：
 ```go
 import "github.com/bagaking/iconmarker/assets"
 
-// 使用类型安全的枚举加载图标
 svgData, err := assets.IconDiamondMarker.Load()
-
-// 也可按名称读取
 locationData, err := assets.GetSVGIcon("location-pin")
-
-// 获取所有可用图标的名称列表
 iconNames, err := assets.ListAvailableIcons()
-
-// 通过名称获取任意图标
-svgData, err := assets.GetSVGIcon("diamond-marker")
 ```
 
-## 运行所有示例
+## Asset provenance
 
-使用提供的脚本一次性运行所有示例：
+Example inputs live in `assets/`:
 
-```bash
-./run_examples.sh
+- `background.jpg`: JPEG background used by text, filter, and SVG layout
+  examples.
+- `icon.svg`: SVG input used by SVG rendering examples.
+- `font.ttf`: optional TrueType font available to examples that want an
+  external font file.
+
+Several examples also use runtime embedded assets from `../assets/`, including
+the default font and SVG icon set. The `badge` example builds its badge and icon
+SVG templates directly inside `badge/main.go`; it does not depend on an
+external badge image.
+
+## Preview snapshots
+
+The root README displays two checked-in snapshots:
+
+| Snapshot | Source command | Source output |
+| --- | --- | --- |
+| `../docs/assets/simple_icons_with_text.png` | `cd icon_dashboard && go run main.go` | `icon_dashboard/output/simple_icons_with_text.png` |
+| `../docs/assets/badge_resolved.png` | `cd badge && go run main.go` | `badge/output/badge_resolved.png` |
+
+Do not describe a newly named output as a baseline unless it is generated by
+the example code and intentionally promoted to a checked-in documentation
+snapshot.
+
+## Validation
+
+From the repository root, use the same commands as the root README:
+
+```sh
+go test ./...
+bash examples/run_examples.sh
+git diff --check
 ```
 
-所有示例的输出将保存在各自目录下的 `output` 文件夹中。
+After running examples, `git status --short --ignored` should show each
+example's `output` directory as ignored or untracked local artifacts, not staged
+source changes.
 
-## 资源文件
+## Notes for new examples
 
-示例使用的资源文件位于 `assets` 目录中：
-- `background.jpg`: 用作背景的图片
-- `icon.svg`: 用于SVG渲染示例的图标
-- `font.ttf`: 用于文本渲染的字体文件
+When adding an example:
 
-**关于字体文件**：示例可读取 `font.ttf`，库本身也内嵌了阿里巴巴普惠体作为默认字体；调用文本 API 时传入空字体字节即可使用默认字体。
+1. Put it in its own directory with a `main.go` file.
+2. Read inputs from checked-in assets or generate them in code.
+3. Write outputs under that example's `output/` directory.
+4. Add exact generated file names to the gallery table above.
+5. Keep preview snapshots under `../docs/assets/` only when they are copied from
+   a verified example output and needed by documentation.
 
-## 自定义示例
-
-如果要创建自己的示例，建议遵循以下模式：
-1. 创建一个新的目录或单文件
-2. 加载背景图像或创建空白图像
-3. 创建IconMarker实例
-4. 使用适当的API添加内容或应用滤镜
-5. 保存结果到output目录
-
-## 注意事项
-
-- 所有示例都需要 Go 1.23 或更高版本
-- 确保在运行示例前已通过`go mod tidy`安装所有依赖
-- 如果您在运行示例时遇到问题，请查看IconMarker的文档或提交issue
+All examples require Go 1.23 or newer. If an example needs an external font,
+pass `font.ttf`; passing an empty font slice to the text API uses the embedded
+default font.

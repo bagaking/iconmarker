@@ -57,8 +57,6 @@ func compositeSingleFilter(bgImg image.Image, outputDir string) error {
 	bounds := bgImg.Bounds()
 	img := image.NewRGBA(bounds)
 	draw.Draw(img, bounds, bgImg, image.Point{}, draw.Src)
-
-	// 创建IconMarker实例
 	marker := iconmarker.NewIconMarker()
 
 	// 创建组合滤镜选项

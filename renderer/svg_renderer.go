@@ -182,8 +182,10 @@ func (r *SVGRenderer) renderSVG(svgData []byte, width, height int) (*image.RGBA,
 	// 确保我们有SVG数据
 	if svgResource == nil {
 		// 缓存SVG数据
+		svgDataCopy := make([]byte, len(svgData))
+		copy(svgDataCopy, svgData)
 		svgResource = &SVGResource{
-			svgData: append([]byte(nil), svgData...),
+			svgData: svgDataCopy,
 		}
 		r.resourceManager.PutResource("svg", key, r.resourceManager.GetSVGCache(), svgResource)
 	}

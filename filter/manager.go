@@ -13,7 +13,7 @@ func (fm *FilterManager) ApplyFilters(src image.Image, filterNames []string, opt
 	// Create a new RGBA image to work with
 	bounds := src.Bounds()
 	dst := image.NewRGBA(bounds)
-	draw.Draw(dst, dst.Bounds(), src, src.Bounds().Min, draw.Src)
+	draw.Draw(dst, dst.Bounds(), src, bounds.Min, draw.Src)
 
 	// Apply each filter in sequence
 	for i, name := range filterNames {
