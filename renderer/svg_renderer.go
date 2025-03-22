@@ -2,8 +2,11 @@ package renderer
 
 import (
 	"bytes"
+	"encoding/xml"
 	"fmt"
 	"image"
+	"io"
+	"strings"
 	"sync"
 
 	"github.com/bagaking/iconmarker/cache"
@@ -47,6 +50,9 @@ type SVGRenderer struct {
 
 // NewSVGRenderer creates a new SVG renderer
 func NewSVGRenderer(resourceManager *cache.ResourceManager) *SVGRenderer {
+	if resourceManager == nil {
+		resourceManager = cache.NewResourceManager(16, 1, 1)
+	}
 	return &SVGRenderer{
 		resourceManager: resourceManager,
 	}
@@ -72,13 +78,62 @@ func (r *SVGRenderer) Render(options RenderOption) (image.Image, error) {
 	}
 
 	// Parse and render SVG
-	svgData := svgOptions.GetSVGData()
+	// Copy option-owned bytes before hashing/caching.  Callers often reuse a
+	// scratch buffer; retaining that slice would let later mutation corrupt a
+	// supposedly immutable cached resource.
+	svgData := append([]byte(nil), svgOptions.GetSVGData()...)
+	if len(svgData) == 0 {
+		return nil, fmt.Errorf("SVG data is empty")
+	}
+	if err := validateSVGData(svgData); err != nil {
+		return nil, err
+	}
 	img, err := r.renderSVG(svgData, width, height)
 	if err != nil {
 		return nil, err
 	}
 
 	return img, nil
+}
+
+// validateSVGData performs a small XML-level validation before handing data to
+// oksvg.  oksvg intentionally accepts some non-SVG input as an empty icon, so
+// without this check a typo such as "not svg" would incorrectly report success.
+func validateSVGData(data []byte) error {
+	decoder := xml.NewDecoder(bytes.NewReader(data))
+	foundSVG := false
+	depth := 0
+	for {
+		token, err := decoder.Token()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return fmt.Errorf("error parsing SVG XML: %w", err)
+		}
+		switch element := token.(type) {
+		case xml.StartElement:
+			if !foundSVG {
+				if !strings.EqualFold(element.Name.Local, "svg") {
+					return fmt.Errorf("SVG root element is %q, want svg", element.Name.Local)
+				}
+				foundSVG = true
+			}
+			depth++
+		case xml.EndElement:
+			depth--
+			if depth < 0 {
+				return fmt.Errorf("invalid SVG XML: unexpected closing element %q", element.Name.Local)
+			}
+		}
+	}
+	if !foundSVG {
+		return fmt.Errorf("SVG root element is missing")
+	}
+	if depth != 0 {
+		return fmt.Errorf("invalid SVG XML: unclosed element")
+	}
+	return nil
 }
 
 // RenderMultiple renders multiple SVGs in parallel
@@ -128,7 +183,7 @@ func (r *SVGRenderer) renderSVG(svgData []byte, width, height int) (*image.RGBA,
 	if svgResource == nil {
 		// 缓存SVG数据
 		svgResource = &SVGResource{
-			svgData: svgData,
+			svgData: append([]byte(nil), svgData...),
 		}
 		r.resourceManager.PutResource("svg", key, r.resourceManager.GetSVGCache(), svgResource)
 	}
