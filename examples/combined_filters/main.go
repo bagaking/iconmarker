@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/draw"
 	"image/jpeg"
+	"log"
 	"os"
 	"path/filepath"
 
@@ -13,33 +14,45 @@ import (
 )
 
 func main() {
+	if err := run(); err != nil {
+		log.Printf("combined_filters failed: %v", err)
+		os.Exit(1)
+	}
+}
+
+func run() error {
 	// 打开背景图像
 	bgFile := filepath.Join("..", "assets", "background.jpg")
 	bgImg, err := openImage(bgFile)
 	if err != nil {
-		fmt.Printf("无法打开背景图像: %v\n", err)
-		return
+		return fmt.Errorf("无法打开背景图像: %w", err)
 	}
 
 	// 创建输出目录
 	outputDir := "output"
 	if err := os.MkdirAll(outputDir, 0755); err != nil {
-		fmt.Printf("创建输出目录失败: %v\n", err)
-		return
+		return fmt.Errorf("创建输出目录失败: %w", err)
 	}
 
 	// 示例1：使用内置组合滤镜
-	compositeSingleFilter(bgImg, outputDir)
+	if err := compositeSingleFilter(bgImg, outputDir); err != nil {
+		return fmt.Errorf("内置组合滤镜: %w", err)
+	}
 
 	// 示例2：顺序应用多个滤镜
-	sequentialFilters(bgImg, outputDir)
+	if err := sequentialFilters(bgImg, outputDir); err != nil {
+		return fmt.Errorf("顺序滤镜: %w", err)
+	}
 
 	// 示例3：自定义组合滤镜
-	customCompositeFilter(bgImg, outputDir)
+	if err := customCompositeFilter(bgImg, outputDir); err != nil {
+		return fmt.Errorf("自定义组合滤镜: %w", err)
+	}
+	return nil
 }
 
 // 使用内置组合滤镜示例
-func compositeSingleFilter(bgImg image.Image, outputDir string) {
+func compositeSingleFilter(bgImg image.Image, outputDir string) error {
 	// 复制背景图像
 	bounds := bgImg.Bounds()
 	img := image.NewRGBA(bounds)
@@ -64,22 +77,21 @@ func compositeSingleFilter(bgImg image.Image, outputDir string) {
 	// 应用组合滤镜
 	filteredImg, err := marker.ApplyFilter(img, "composite", compositeOpt)
 	if err != nil {
-		fmt.Printf("应用组合滤镜失败: %v\n", err)
-		return
+		return fmt.Errorf("应用组合滤镜失败: %w", err)
 	}
 
 	// 保存结果
 	outFile := filepath.Join(outputDir, "composite_filter.jpg")
 	if err := saveImage(filteredImg, outFile); err != nil {
-		fmt.Printf("保存图像失败: %v\n", err)
-		return
+		return fmt.Errorf("保存图像失败: %w", err)
 	}
 
 	fmt.Printf("已保存: %s\n", outFile)
+	return nil
 }
 
 // 顺序应用多个滤镜示例
-func sequentialFilters(bgImg image.Image, outputDir string) {
+func sequentialFilters(bgImg image.Image, outputDir string) error {
 	// 复制背景图像
 	bounds := bgImg.Bounds()
 	img := image.NewRGBA(bounds)
@@ -93,8 +105,7 @@ func sequentialFilters(bgImg image.Image, outputDir string) {
 		PreserveAlpha: true,
 	})
 	if err != nil {
-		fmt.Printf("应用灰度滤镜失败: %v\n", err)
-		return
+		return fmt.Errorf("应用灰度滤镜失败: %w", err)
 	}
 
 	// 应用滤镜2: 蓝色色调
@@ -103,8 +114,7 @@ func sequentialFilters(bgImg image.Image, outputDir string) {
 		Intensity: 0.5,                 // 中等强度
 	})
 	if err != nil {
-		fmt.Printf("应用色调滤镜失败: %v\n", err)
-		return
+		return fmt.Errorf("应用色调滤镜失败: %w", err)
 	}
 
 	// 应用滤镜3: 降低不透明度
@@ -112,22 +122,21 @@ func sequentialFilters(bgImg image.Image, outputDir string) {
 		Opacity: 0.8, // 80%不透明度
 	})
 	if err != nil {
-		fmt.Printf("应用不透明度滤镜失败: %v\n", err)
-		return
+		return fmt.Errorf("应用不透明度滤镜失败: %w", err)
 	}
 
 	// 保存结果
 	outFile := filepath.Join(outputDir, "sequential_filters.jpg")
 	if err := saveImage(finalImg, outFile); err != nil {
-		fmt.Printf("保存图像失败: %v\n", err)
-		return
+		return fmt.Errorf("保存图像失败: %w", err)
 	}
 
 	fmt.Printf("已保存: %s\n", outFile)
+	return nil
 }
 
 // 自定义组合滤镜示例 - 使用ApplyFilters
-func customCompositeFilter(bgImg image.Image, outputDir string) {
+func customCompositeFilter(bgImg image.Image, outputDir string) error {
 	// 复制背景图像
 	bounds := bgImg.Bounds()
 	img := image.NewRGBA(bounds)
@@ -152,18 +161,17 @@ func customCompositeFilter(bgImg image.Image, outputDir string) {
 	// 使用全局API应用多个滤镜
 	filteredImg, err := iconmarker.ApplyFilters(img, filterNames, filterOptions)
 	if err != nil {
-		fmt.Printf("应用多个滤镜失败: %v\n", err)
-		return
+		return fmt.Errorf("应用多个滤镜失败: %w", err)
 	}
 
 	// 保存结果
 	outFile := filepath.Join(outputDir, "custom_composite.jpg")
 	if err := saveImage(filteredImg, outFile); err != nil {
-		fmt.Printf("保存图像失败: %v\n", err)
-		return
+		return fmt.Errorf("保存图像失败: %w", err)
 	}
 
 	fmt.Printf("已保存: %s\n", outFile)
+	return nil
 }
 
 // 打开图像文件

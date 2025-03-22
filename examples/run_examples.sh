@@ -9,6 +9,8 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
+overall_status=0
+
 # 确保资源文件存在
 if [ ! -d "assets" ]; then
   mkdir -p assets
@@ -41,6 +43,7 @@ run_single_example() {
     echo -e "${GREEN}✓ 成功运行: $example_name${NC}"
   else
     echo -e "${RED}✗ 运行失败: $example_name${NC}"
+		overall_status=1
   fi
   echo "--------------------------------------------------"
 }
@@ -65,6 +68,7 @@ run_dir_example() {
     echo -e "${GREEN}✓ 成功运行: $example_name${NC}"
   else
     echo -e "${RED}✗ 运行失败: $example_name${NC}"
+		overall_status=1
   fi
   
   # 返回原目录
@@ -91,4 +95,5 @@ for dir in */; do
 done
 
 echo -e "${GREEN}所有示例运行完成${NC}"
-echo "可以在各示例目录的output目录中查看输出文件" 
+echo "可以在各示例目录的output目录中查看输出文件"
+exit "$overall_status"

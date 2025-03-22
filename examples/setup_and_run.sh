@@ -58,9 +58,12 @@ echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
   print_separator
   echo -e "${GREEN}运行所有示例...${NC}"
-  ./run_examples.sh
+  if ! ./run_examples.sh; then
+    echo -e "${RED}一个或多个示例运行失败。${NC}" >&2
+    exit 1
+  fi
 else
   echo -e "${GREEN}设置完成。您可以稍后手动运行示例。${NC}"
 fi
 
-print_separator 
+print_separator
