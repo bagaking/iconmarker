@@ -27,3 +27,6 @@ jobs:
 
       - name: Run tests
         run: go test ./...
+
+      - name: Run examples
+        run: bash examples/run_examples.sh

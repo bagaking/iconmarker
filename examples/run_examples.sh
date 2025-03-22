@@ -1,4 +1,5 @@
 #!/bin/bash
+set -u
 
 # 颜色定义
 GREEN='\033[0;32m'
@@ -51,6 +52,7 @@ run_single_example() {
 run_dir_example() {
   local example_dir=$1
   local example_name=$(basename "$example_dir")
+  local previous_dir="$PWD"
   
   echo -e "${GREEN}运行示例: $example_name${NC}"
   
@@ -71,7 +73,7 @@ run_dir_example() {
   fi
   
   # 返回原目录
-  cd "$SCRIPT_DIR"
+  cd "$previous_dir"
   echo "--------------------------------------------------"
 }
 

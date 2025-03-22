@@ -67,6 +67,32 @@ func main() {
 }
 ```
 
+## Examples Gallery
+
+The repository includes runnable examples with lightweight checked-in assets.
+They cover text layout, text effects, SVG rendering, composed filters, badges,
+and dashboard-style icon layouts.
+
+| Example | Shows | Sample output |
+| --- | --- | --- |
+| `examples/basic_text` | Legacy and current centered text APIs | [basic_text_new.jpg](examples/basic_text/output/basic_text_new.jpg) |
+| `examples/text_effects` | Shadows, outlines, and combined text effects | [text_combined_effects.jpg](examples/text_effects/output/text_combined_effects.jpg) |
+| `examples/svg_rendering` | SVG loading, resizing, and filter application | [svg_filtered.jpg](examples/svg_rendering/output/svg_filtered.jpg) |
+| `examples/combined_filters` | Composite and sequential filter pipelines | [composite_filter.jpg](examples/combined_filters/output/composite_filter.jpg) |
+| `examples/svg_with_text` | SVG and text layout combinations | [svg_left_text_right.jpg](examples/svg_with_text/output/svg_left_text_right.jpg) |
+| `examples/badge` | Status badge generation from SVG, text, and color | [badge.png](examples/badge/output/badge.png) |
+| `examples/icon_dashboard` | Embedded icons, filters, and labels in one image | [simple_icons_with_text.png](examples/icon_dashboard/output/simple_icons_with_text.png) |
+
+Run all examples from the repository root:
+
+```sh
+bash examples/run_examples.sh
+```
+
+The script writes generated files under each example's `output/` directory and
+returns a non-zero exit code if any example fails, so it is suitable for local
+smoke testing and CI.
+
 ## API Notes
 
 - `CreateImg(fontBytes, backgroundBytes []byte, opts ...DrawTextOption)`
@@ -129,10 +155,11 @@ to register a custom implementation of the `filter.Filter` interface.
 
 ## Validation
 
-Run the test suite with:
+Run the test suite and example smoke test with:
 
 ```sh
 go test ./...
+bash examples/run_examples.sh
 ```
 
 ## License
