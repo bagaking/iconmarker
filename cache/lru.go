@@ -53,6 +53,10 @@ func (c *LRUCache) Put(key string, value CacheItem) bool {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
+	if c.capacity <= 0 {
+		return false
+	}
+
 	// Check if item already exists
 	if item, found := c.items[key]; found {
 		item.value = value
