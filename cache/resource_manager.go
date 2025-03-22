@@ -18,12 +18,17 @@ type ResourceManager struct {
 
 // NewResourceManager creates a new resource manager with specified cache sizes
 func NewResourceManager(svgCacheSize, fontCacheSize, imageCacheSize int) *ResourceManager {
-	return &ResourceManager{
+	rm := &ResourceManager{
 		svgCache:    NewLRUCache(svgCacheSize),
 		fontCache:   NewLRUCache(fontCacheSize),
 		imageCache:  NewLRUCache(imageCacheSize),
 		ttlDuration: 30 * time.Minute, // Default TTL
 	}
+	// Apply the default policy to the concrete caches as well.  Keeping the
+	// duration only on ResourceManager would make the setting observationally
+	// inert because Cache.Put is where expiration timestamps are assigned.
+	rm.applyTTL(rm.ttlDuration)
+	return rm
 }
 
 // SetTTL sets the time-to-live duration for cached resources
@@ -31,6 +36,25 @@ func (rm *ResourceManager) SetTTL(duration time.Duration) {
 	rm.mu.Lock()
 	defer rm.mu.Unlock()
 	rm.ttlDuration = duration
+	rm.applyTTL(duration)
+}
+
+// applyTTL propagates the manager policy to each underlying cache without
+// widening the public Cache interface (which would break existing custom
+// cache implementations).
+func (rm *ResourceManager) applyTTL(duration time.Duration) {
+	for _, c := range []Cache{rm.svgCache, rm.fontCache, rm.imageCache} {
+		if ttlCache, ok := c.(interface{ SetTTL(time.Duration) }); ok {
+			ttlCache.SetTTL(duration)
+		}
+	}
+}
+
+// TTL returns the manager's current expiration policy.
+func (rm *ResourceManager) TTL() time.Duration {
+	rm.mu.RLock()
+	defer rm.mu.RUnlock()
+	return rm.ttlDuration
 }
 
 // GetResource is a generic method to get a resource from the specified cache
